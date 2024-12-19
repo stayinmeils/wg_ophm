@@ -606,7 +606,7 @@ func WgCreateTun(fd int, mtu int) (Device, error) {
 	//if err != nil {
 	//	unix.Close(fd)
 	//	return nil, errors.New("SetNonblock error" + err.Error())
-	}
+	//}
 
 	// Note that the above -- open,ioctl,nonblock -- must happen prior to handing it to netpoll as below this line.
 
