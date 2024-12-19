@@ -15,7 +15,6 @@ import (
 
 //export startTun
 func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps, endpoint C.c_string, callback unsafe.Pointer) C.c_string {
-
 	var foreground bool
 	var interfaceName string
 
