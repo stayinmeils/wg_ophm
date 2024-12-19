@@ -79,7 +79,7 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 
 	if err != nil {
 		logger.Errorf("Failed to create TUN device: %v", err)
-		return err.Error()
+		return C.CString(err.Error())
 	}
 
 	// open UAPI file (or use supplied fd)
@@ -187,11 +187,11 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 
 	err = device.IpcSetOperationByString(lines)
 	if err != nil {
-		return err.Error()
+		return C.CString(err.Error())
 	}
 	err = device.Up()
 	if err != nil {
-		return err.Error()
+		return C.CString(err.Error())
 	}
 	//logger.Verbosef("UAPI listener started")
 
@@ -211,7 +211,7 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	device.Close()
 
 	logger.Verbosef("Shutting down")
-	return "success"
+	return C.CString("success")
 }
 
 ////export stopTun
