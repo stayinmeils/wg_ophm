@@ -1,5 +1,5 @@
 #!/bin/bash
-
+rm -rf ./wg.so
 # 设置架构和目标
 arch="arm64"  # 可选值：amd64, arm64
 target="aarch64"  # 可选值：x86_64, aarch64
@@ -30,7 +30,7 @@ export CGO_LDFLAGS="-extld=$LD --sysroot=$OHOS_NATIVE_HOME/sysroot --target=$tar
 
 # 源文件和输出文件
 sourceFile="./native"
-outputFile="myapp.so"
+outputFile="wg.so"
 
 # 构建命令，生成共享库
 go build -buildmode c-shared -tags "foss cmfa with_gvisor ohos" -v -o $outputFile $sourceFile
