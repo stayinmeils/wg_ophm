@@ -14,7 +14,7 @@ import (
 )
 
 //export startTun
-func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps, endpoint C.c_string, callback unsafe.Pointer) C.int {
+func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps, endpoint C.c_string, callback unsafe.Pointer) C.c_string {
 
 	var foreground bool
 	var interfaceName string
@@ -79,7 +79,7 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 
 	if err != nil {
 		logger.Errorf("Failed to create TUN device: %v", err)
-		os.Exit(ExitSetupFailed)
+		return err.Error()
 	}
 
 	// open UAPI file (or use supplied fd)
@@ -187,11 +187,11 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 
 	err = device.IpcSetOperationByString(lines)
 	if err != nil {
-		return -1
+		return err.Error()
 	}
 	err = device.Up()
 	if err != nil {
-		return -1
+		return err.Error()
 	}
 	//logger.Verbosef("UAPI listener started")
 
@@ -211,7 +211,7 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	device.Close()
 
 	logger.Verbosef("Shutting down")
-	return 0
+	return "success"
 }
 
 ////export stopTun
