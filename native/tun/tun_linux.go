@@ -581,6 +581,39 @@ func CreateTUN(name string, mtu int) (Device, error) {
 	return CreateTUNFromFile(fd, mtu)
 }
 
+func WgCreateTun(fd int, mtu int) (Device, error) {
+	//nfd, err := unix.Open(cloneDevicePath, unix.O_RDWR|unix.O_CLOEXEC, 0)
+	//if err != nil {
+	//	if os.IsNotExist(err) {
+	//		return nil, fmt.Errorf("CreateTUN(%q) failed; %s does not exist", name, cloneDevicePath)
+	//	}
+	//	return nil, err
+	//}
+
+	ifr, err := unix.NewIfreq("utun0")
+	if err != nil {
+		return nil, err
+	}
+	// IFF_VNET_HDR enables the "tun status hack" via routineHackListener()
+	// where a null write will return EINVAL indicating the TUN is up.
+	ifr.SetUint16(unix.IFF_TUN | unix.IFF_NO_PI | unix.IFF_VNET_HDR)
+	err = unix.IoctlIfreq(fd, unix.TUNSETIFF, ifr)
+	if err != nil {
+		return nil, err
+	}
+
+	err = unix.SetNonblock(fd, true)
+	if err != nil {
+		unix.Close(fd)
+		return nil, err
+	}
+
+	// Note that the above -- open,ioctl,nonblock -- must happen prior to handing it to netpoll as below this line.
+
+	file := os.NewFile(uintptr(fd), cloneDevicePath)
+	return CreateTUNFromFile(file, mtu)
+}
+
 // CreateTUNFromFile creates a Device from an os.File with the provided MTU.
 func CreateTUNFromFile(file *os.File, mtu int) (Device, error) {
 	tun := &NativeTun{
