@@ -3,6 +3,7 @@ package main
 //#include "bridge.h"
 import "C"
 import (
+	"encoding/hex"
 	"fmt"
 	"golang.org/x/sys/unix"
 	"os"
@@ -176,9 +177,9 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	//}()
 
 	lines := []string{
-		fmt.Sprintf("private_key=%s", string(C.GoString(devicePrivateKey))),
+		fmt.Sprintf("private_key=%s", hex.EncodeToString([]byte(string(C.GoString(devicePrivateKey))))),
 		fmt.Sprintf("listen_port=%s", string(C.GoString(listenPort))),
-		fmt.Sprintf("public_key=%s", string(C.GoString(peerPublicKey))),
+		fmt.Sprintf("public_key=%s", hex.EncodeToString([]byte(string(C.GoString(peerPublicKey))))),
 		"replace_allowed_ips=true",
 		fmt.Sprintf("allowed_ip=%s", string(C.GoString(allowedIps))),
 		fmt.Sprintf("endpoint=%s", string(C.GoString(endpoint))),
