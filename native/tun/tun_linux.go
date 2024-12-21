@@ -659,11 +659,11 @@ func CreateTUNFromFile(file *os.File, mtu int) (Device, error) {
 	//go tun.routineNetlinkListener()
 	//go tun.routineHackListener() // cross namespace
 
-	err = tun.setMTU(mtu)
-	if err != nil {
-		//unix.Close(tun.netlinkSock)
-		return nil, errors.New("set MTU error: " + err.Error())
-	}
+	//err = tun.setMTU(mtu)
+	//if err != nil {
+	//	//unix.Close(tun.netlinkSock)
+	//	return nil, errors.New("set MTU error: " + err.Error())
+	//}
 
 	return tun, nil
 }
