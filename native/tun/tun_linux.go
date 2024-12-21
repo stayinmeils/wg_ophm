@@ -628,10 +628,10 @@ func CreateTUNFromFile(file *os.File, mtu int) (Device, error) {
 		toWrite:                 make([]int, 0, conn.IdealBatchSize),
 	}
 
-	name, err := tun.Name()
-	if err != nil {
-		return nil, errors.New("tun name error: " + err.Error())
-	}
+	//name, err := tun.Name()
+	//if err != nil {
+	//	return nil, errors.New("tun name error: " + err.Error())
+	//}
 
 	//err = tun.initFromFlags(name)
 	//if err != nil {
@@ -639,16 +639,16 @@ func CreateTUNFromFile(file *os.File, mtu int) (Device, error) {
 	//}
 
 	// start event listener
-	tun.index, err = getIFIndex(name)
-	if err != nil {
-		return nil, errors.New("tun index error: " + err.Error())
-	}
+	//tun.index, err = getIFIndex(name)
+	//if err != nil {
+	//	return nil, errors.New("tun index error: " + err.Error())
+	//}
 
 	//tun.netlinkSock, err = createNetlinkSocket()
 	//if err != nil {
 	//	return nil, errors.New("create netlink socket error: " + err.Error())
 	//}
-
+	var err error
 	tun.netlinkCancel, err = rwcancel.NewRWCancel(tun.netlinkSock)
 	if err != nil {
 		//unix.Close(tun.netlinkSock)
