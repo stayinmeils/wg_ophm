@@ -265,43 +265,45 @@ func (tun *NativeTun) setMTU(n int) error {
 }
 
 func (tun *NativeTun) MTU() (int, error) {
-	name, err := tun.Name()
-	if err != nil {
-		return 0, err
-	}
-
-	// open datagram socket
-	fd, err := unix.Socket(
-		unix.AF_INET,
-		unix.SOCK_DGRAM|unix.SOCK_CLOEXEC,
-		0,
-	)
-	if err != nil {
-		return 0, err
-	}
-
-	defer unix.Close(fd)
-
-	// do ioctl call
-
-	var ifr [ifReqSize]byte
-	copy(ifr[:], name)
-	_, _, errno := unix.Syscall(
-		unix.SYS_IOCTL,
-		uintptr(fd),
-		uintptr(unix.SIOCGIFMTU),
-		uintptr(unsafe.Pointer(&ifr[0])),
-	)
-	if errno != 0 {
-		return 0, fmt.Errorf("failed to get MTU of TUN device: %w", errno)
-	}
-
-	return int(*(*int32)(unsafe.Pointer(&ifr[unix.IFNAMSIZ]))), nil
+	return 1400, nil
+	//name, err := tun.Name()
+	//if err != nil {
+	//	return 0, err
+	//}
+	//
+	//// open datagram socket
+	//fd, err := unix.Socket(
+	//	unix.AF_INET,
+	//	unix.SOCK_DGRAM|unix.SOCK_CLOEXEC,
+	//	0,
+	//)
+	//if err != nil {
+	//	return 0, err
+	//}
+	//
+	//defer unix.Close(fd)
+	//
+	//// do ioctl call
+	//
+	//var ifr [ifReqSize]byte
+	//copy(ifr[:], name)
+	//_, _, errno := unix.Syscall(
+	//	unix.SYS_IOCTL,
+	//	uintptr(fd),
+	//	uintptr(unix.SIOCGIFMTU),
+	//	uintptr(unsafe.Pointer(&ifr[0])),
+	//)
+	//if errno != 0 {
+	//	return 0, fmt.Errorf("failed to get MTU of TUN device: %w", errno)
+	//}
+	//
+	//return int(*(*int32)(unsafe.Pointer(&ifr[unix.IFNAMSIZ]))), nil
 }
 
 func (tun *NativeTun) Name() (string, error) {
-	tun.nameOnce.Do(tun.initNameCache)
-	return tun.nameCache, tun.nameErr
+	//tun.nameOnce.Do(tun.initNameCache)
+	//return tun.nameCache, tun.nameErr
+	return "vpn-tun", nil
 }
 
 func (tun *NativeTun) initNameCache() {
@@ -642,23 +644,24 @@ func CreateTUNFromFile(file *os.File, mtu int) (Device, error) {
 		return nil, errors.New("tun index error: " + err.Error())
 	}
 
-	tun.netlinkSock, err = createNetlinkSocket()
-	if err != nil {
-		return nil, errors.New("create netlink socket error: " + err.Error())
-	}
+	//tun.netlinkSock, err = createNetlinkSocket()
+	//if err != nil {
+	//	return nil, errors.New("create netlink socket error: " + err.Error())
+	//}
+
 	tun.netlinkCancel, err = rwcancel.NewRWCancel(tun.netlinkSock)
 	if err != nil {
-		unix.Close(tun.netlinkSock)
+		//unix.Close(tun.netlinkSock)
 		return nil, errors.New("create netlink socket error: " + err.Error())
 	}
 
 	tun.hackListenerClosed.Lock()
-	go tun.routineNetlinkListener()
-	go tun.routineHackListener() // cross namespace
+	//go tun.routineNetlinkListener()
+	//go tun.routineHackListener() // cross namespace
 
 	err = tun.setMTU(mtu)
 	if err != nil {
-		unix.Close(tun.netlinkSock)
+		//unix.Close(tun.netlinkSock)
 		return nil, errors.New("set MTU error: " + err.Error())
 	}
 

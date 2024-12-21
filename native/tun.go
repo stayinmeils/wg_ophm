@@ -15,32 +15,6 @@ import (
 
 //export startTun
 func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps, endpoint C.c_string, callback unsafe.Pointer) C.c_string {
-	var stat unix.Stat_t
-	err := unix.Fstat(fd, &stat)
-	if err != nil {
-		return C.CString(err.Error())
-	}
-
-	// 检查文件类型
-	switch stat.Mode & unix.S_IFMT {
-	case unix.S_IFREG:
-		return C.CString("Regular file")
-	case unix.S_IFDIR:
-		return C.CString("Directory")
-	case unix.S_IFCHR:
-		return C.CString("Character device")
-	case unix.S_IFBLK:
-		return C.CString("Block device")
-	case unix.S_IFIFO:
-		return C.CString("FIFO/pipe")
-	case unix.S_IFLNK:
-		return C.CString("Symbolic link")
-	case unix.S_IFSOCK:
-		return C.CString("Socket")
-	default:
-		return C.CString("Unknown")
-	}
-
 	var foreground bool
 	var interfaceName string
 
