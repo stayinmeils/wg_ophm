@@ -633,10 +633,10 @@ func CreateTUNFromFile(file *os.File, mtu int) (Device, error) {
 		return nil, errors.New("tun name error: " + err.Error())
 	}
 
-	err = tun.initFromFlags(name)
-	if err != nil {
-		return nil, errors.New("tun init error: " + err.Error())
-	}
+	//err = tun.initFromFlags(name)
+	//if err != nil {
+	//	return nil, errors.New("tun init error: " + err.Error())
+	//}
 
 	// start event listener
 	tun.index, err = getIFIndex(name)
