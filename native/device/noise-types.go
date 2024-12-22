@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	NoisePublicKeySize    = 44
-	NoisePrivateKeySize   = 44
-	NoisePresharedKeySize = 44
+	NoisePublicKeySize    = 32
+	NoisePrivateKeySize   = 32
+	NoisePresharedKeySize = 32
 )
 
 type (

@@ -175,16 +175,16 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	//		go device.IpcHandle(conn)
 	//	}
 	//}()
-
+	ppk:=[]byte{220,239,61,112,192,52,204,107,74,161,131,117,5,226,246,65,150,94,134,223,226,251,200,34,243,207,134,192,251,89,143,75}
+	dpk:=[]byte{216,112,171,239,161,147,57,95,165,230,33,66,196,253,217,82,31,210,101,174,128,233,107,172,19,146,75,230,247,104,128,127}
 	lines := []string{
-		fmt.Sprintf("private_key=%s", hex.EncodeToString([]byte(string(C.GoString(devicePrivateKey))))),
+		fmt.Sprintf("private_key=%s", hex.EncodeToString(dpk),
 		fmt.Sprintf("listen_port=%s", string(C.GoString(listenPort))),
-		fmt.Sprintf("public_key=%s", hex.EncodeToString([]byte(string(C.GoString(peerPublicKey))))),
+		fmt.Sprintf("public_key=%s", hex.EncodeToString(ppk),
 		"replace_allowed_ips=true",
 		fmt.Sprintf("allowed_ip=%s", string(C.GoString(allowedIps))),
 		fmt.Sprintf("endpoint=%s", string(C.GoString(endpoint))),
 	}
-	return C.CString(C.GoString(devicePrivateKey))
 	err = device.IpcSetOperationByString(lines)
 	if err != nil {
 		return C.CString(err.Error())
