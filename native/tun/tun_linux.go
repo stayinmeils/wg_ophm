@@ -16,6 +16,7 @@ import (
 	"syscall"
 	"time"
 	"unsafe"
+	"wg/native/erro"
 
 	"golang.org/x/sys/unix"
 	"wg/native/conn"
@@ -466,6 +467,8 @@ func (tun *NativeTun) Read(bufs [][]byte, sizes []int, offset int) (int, error) 
 			err = os.ErrClosed
 		}
 		if err != nil {
+			err = errors.New("tun error")
+			erro.Err <- err
 			return 0, err
 		}
 		if tun.vnetHdr {
