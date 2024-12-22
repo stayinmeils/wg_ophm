@@ -201,9 +201,11 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 
 	select {
 	case <-term:
+		return C.CString("term")
 	case err = <-errs:
 		return C.CString("error:" + err.Error())
 	case <-device.Wait():
+		return C.CString("closed")
 	}
 
 	// clean up
