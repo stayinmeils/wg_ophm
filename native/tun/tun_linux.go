@@ -11,20 +11,18 @@ package tun
 import (
 	"errors"
 	"fmt"
+	"golang.org/x/sys/unix"
 	"os"
 	"sync"
 	"syscall"
 	"time"
 	"unsafe"
-	"wg/native/erro"
-
-	"golang.org/x/sys/unix"
 	"wg/native/conn"
 	"wg/native/rwcancel"
 )
 
 const (
-	cloneDevicePath = "/dev/net/tun"
+	cloneDevicePath = "/dev/tun"
 	ifReqSize       = unix.IFNAMSIZ + 64
 )
 
@@ -467,8 +465,6 @@ func (tun *NativeTun) Read(bufs [][]byte, sizes []int, offset int) (int, error) 
 			err = os.ErrClosed
 		}
 		if err != nil {
-			err = errors.New("tun error")
-			erro.Err <- err
 			return 0, err
 		}
 		if tun.vnetHdr {
