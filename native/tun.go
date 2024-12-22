@@ -27,7 +27,7 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	buf := make([]byte, 65535)
 	_, err := d.Read(buf)
 	if err != nil {
-		return "file read error" + err.Error()
+		return C.CString("file read error" + err.Error())
 	}
 
 	if !foreground {
