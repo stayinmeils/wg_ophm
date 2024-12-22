@@ -11,6 +11,7 @@ import (
 	"unsafe"
 	"wg/native/conn"
 	"wg/native/device"
+	"wg/native/erro"
 	"wg/native/tun"
 )
 
@@ -19,6 +20,7 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	var foreground bool
 	var interfaceName string
 
+	erro.Errinit()
 	foreground = false
 
 	if !foreground {
@@ -206,6 +208,8 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 		return C.CString("error:" + err.Error())
 	case <-device.Wait():
 		return C.CString("closed")
+	case err = <-erro.Err:
+		return C.CString("error:" + err.Error())
 	}
 
 	// clean up

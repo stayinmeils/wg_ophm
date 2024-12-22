@@ -13,6 +13,7 @@ import (
 	"os"
 	"sync"
 	"time"
+	"wg/native/erro"
 
 	"golang.org/x/crypto/chacha20poly1305"
 	"golang.org/x/net/ipv4"
@@ -309,7 +310,9 @@ func (device *Device) RoutineReadFromTUN() {
 				device.log.Verbosef("Dropped some packets from multi-segment read: %v", readErr)
 				continue
 			}
+
 			if !device.isClosed() {
+				erro.Err <- readErr
 				if !errors.Is(readErr, os.ErrClosed) {
 					device.log.Errorf("Failed to read packet from TUN device: %v", readErr)
 				}

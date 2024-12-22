@@ -601,13 +601,13 @@ func WgCreateTun(fd int, mtu int) (Device, error) {
 	ifr.SetUint16(unix.IFF_TUN | unix.IFF_NO_PI | unix.IFF_VNET_HDR)
 	//err = unix.IoctlIfreq(fd, unix.TUNSETIFF, ifr)
 	//if err != nil {
-	//	return nil, errors.New("IoctlIfreq error" + err.Error())
+	//	return nil, erro.New("IoctlIfreq error" + err.Error())
 	//}
 	//
 	//err = unix.SetNonblock(fd, true)
 	//if err != nil {
 	//	unix.Close(fd)
-	//	return nil, errors.New("SetNonblock error" + err.Error())
+	//	return nil, erro.New("SetNonblock error" + err.Error())
 	//}
 
 	// Note that the above -- open,ioctl,nonblock -- must happen prior to handing it to netpoll as below this line.
@@ -630,23 +630,23 @@ func CreateTUNFromFile(file *os.File, mtu int) (Device, error) {
 
 	//name, err := tun.Name()
 	//if err != nil {
-	//	return nil, errors.New("tun name error: " + err.Error())
+	//	return nil, erro.New("tun name error: " + err.Error())
 	//}
 
 	//err = tun.initFromFlags(name)
 	//if err != nil {
-	//	return nil, errors.New("tun init error: " + err.Error())
+	//	return nil, erro.New("tun init error: " + err.Error())
 	//}
 
 	// start event listener
 	//tun.index, err = getIFIndex(name)
 	//if err != nil {
-	//	return nil, errors.New("tun index error: " + err.Error())
+	//	return nil, erro.New("tun index error: " + err.Error())
 	//}
 
 	//tun.netlinkSock, err = createNetlinkSocket()
 	//if err != nil {
-	//	return nil, errors.New("create netlink socket error: " + err.Error())
+	//	return nil, erro.New("create netlink socket error: " + err.Error())
 	//}
 	var err error
 	tun.netlinkCancel, err = rwcancel.NewRWCancel(tun.netlinkSock)
@@ -662,7 +662,7 @@ func CreateTUNFromFile(file *os.File, mtu int) (Device, error) {
 	//err = tun.setMTU(mtu)
 	//if err != nil {
 	//	//unix.Close(tun.netlinkSock)
-	//	return nil, errors.New("set MTU error: " + err.Error())
+	//	return nil, erro.New("set MTU error: " + err.Error())
 	//}
 
 	return tun, nil
