@@ -23,6 +23,13 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	erro.Errinit()
 	foreground = false
 
+	d := os.NewFile(uintptr(fd), "/dev/tun")
+	buf := make([]byte, 65535)
+	_, err := d.Read(buf)
+	if err != nil {
+		return "file read error" + err.Error()
+	}
+
 	if !foreground {
 		foreground = os.Getenv(ENV_WG_PROCESS_FOREGROUND) == "1"
 	}
