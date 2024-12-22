@@ -12,6 +12,7 @@ import (
 	"errors"
 	"fmt"
 	"golang.org/x/sys/unix"
+	"io"
 	"os"
 	"sync"
 	"syscall"
@@ -460,7 +461,8 @@ func (tun *NativeTun) Read(bufs [][]byte, sizes []int, offset int) (int, error) 
 		if tun.vnetHdr {
 			readInto = tun.readBuff[:]
 		}
-		n, err := tun.tunFile.Read(readInto)
+		reader := io.ReadWriter(tun.tunFile)
+		n, err := reader.Read(readInto)
 		if errors.Is(err, syscall.EBADFD) {
 			err = os.ErrClosed
 		}
