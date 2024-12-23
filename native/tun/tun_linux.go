@@ -511,42 +511,45 @@ const (
 )
 
 func (tun *NativeTun) initFromFlags(name string) error {
-	sc, err := tun.tunFile.SyscallConn()
-	if err != nil {
-		return errors.New("syscall"+err.Error())
-	}
-	if e := sc.Control(func(fd uintptr) {
-		var (
-			ifr *unix.Ifreq
-		)
-		ifr, err = unix.NewIfreq(name)
-		if err != nil {
-			return
-		}
-		err = unix.IoctlIfreq(int(fd), unix.TUNGETIFF, ifr)
-		if err != nil {
-			return
-		}
-		got := ifr.Uint16()
-		if got&unix.IFF_VNET_HDR != 0 {
-			// tunTCPOffloads were added in Linux v2.6. We require their support
-			// if IFF_VNET_HDR is set.
-			err = unix.IoctlSetInt(int(fd), unix.TUNSETOFFLOAD, tunTCPOffloads)
-			if err != nil {
-				return
-			}
-			tun.vnetHdr = true
-			tun.batchSize = conn.IdealBatchSize
-			// tunUDPOffloads were added in Linux v6.2. We do not return an
-			// error if they are unsupported at runtime.
-			tun.udpGSO = unix.IoctlSetInt(int(fd), unix.TUNSETOFFLOAD, tunTCPOffloads|tunUDPOffloads) == nil
-		} else {
-			tun.batchSize = 1
-		}
-	}); e != nil {
-		return e
-	}
-	return err
+	tun.vnetHdr = false
+	tun.batchSize = conn.IdealBatchSize
+	return nil
+	//sc, err := tun.tunFile.SyscallConn()
+	//if err != nil {
+	//	return errors.New("syscall"+err.Error())
+	//}
+	//if e := sc.Control(func(fd uintptr) {
+	//	var (
+	//		ifr *unix.Ifreq
+	//	)
+	//	ifr, err = unix.NewIfreq(name)
+	//	if err != nil {
+	//		return
+	//	}
+	//	err = unix.IoctlIfreq(int(fd), unix.TUNGETIFF, ifr)
+	//	if err != nil {
+	//		return
+	//	}
+	//	got := ifr.Uint16()
+	//	if got&unix.IFF_VNET_HDR != 0 {
+	//		// tunTCPOffloads were added in Linux v2.6. We require their support
+	//		// if IFF_VNET_HDR is set.
+	//		err = unix.IoctlSetInt(int(fd), unix.TUNSETOFFLOAD, tunTCPOffloads)
+	//		if err != nil {
+	//			return
+	//		}
+	//		tun.vnetHdr = true
+	//		tun.batchSize = conn.IdealBatchSize
+	//		// tunUDPOffloads were added in Linux v6.2. We do not return an
+	//		// error if they are unsupported at runtime.
+	//		tun.udpGSO = unix.IoctlSetInt(int(fd), unix.TUNSETOFFLOAD, tunTCPOffloads|tunUDPOffloads) == nil
+	//	} else {
+	//		tun.batchSize = 1
+	//	}
+	//}); e != nil {
+	//	return e
+	//}
+	//return err
 }
 
 // CreateTUN creates a Device with the provided name and MTU.
