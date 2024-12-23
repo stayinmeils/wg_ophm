@@ -513,7 +513,7 @@ const (
 func (tun *NativeTun) initFromFlags(name string) error {
 	sc, err := tun.tunFile.SyscallConn()
 	if err != nil {
-		return err
+		return errors.New("syscall"+err.Error())
 	}
 	if e := sc.Control(func(fd uintptr) {
 		var (
@@ -623,19 +623,19 @@ func WgCreateTun(fd int, mtu int) (Device, error) {
 	//	return nil, err
 	//}
 
-	ifr, err := unix.NewIfreq("utun0")
-	if err != nil {
-		return nil, errors.New("NewIfreq failed: " + err.Error())
-	}
+	// ifr, err := unix.NewIfreq("utun0")
+	// if err != nil {
+	// 	return nil, errors.New("NewIfreq failed: " + err.Error())
+	// }
 	// IFF_VNET_HDR enables the "tun status hack" via routineHackListener()
 	// where a null write will return EINVAL indicating the TUN is up.
-	ifr.SetUint16(unix.IFF_TUN | unix.IFF_NO_PI | unix.IFF_VNET_HDR)
-	err = unix.IoctlIfreq(fd, unix.TUNSETIFF, ifr)
-	if err != nil {
-		return nil, errors.New("IoctlIfreq error" + err.Error())
-	}
+	// ifr.SetUint16(unix.IFF_TUN | unix.IFF_NO_PI | unix.IFF_VNET_HDR)
+	// err = unix.IoctlIfreq(fd, unix.TUNSETIFF, ifr)
+	// if err != nil {
+	// 	return nil, errors.New("IoctlIfreq error" + err.Error())
+	// }
 
-	err = unix.SetNonblock(fd, true)
+	err := unix.SetNonblock(fd, true)
 	if err != nil {
 		unix.Close(fd)
 		return nil, errors.New("SetNonblock error" + err.Error())
@@ -660,15 +660,15 @@ func CreateTUNFromFile(file *os.File, mtu int) (Device, error) {
 		batchSize:               128,
 	}
 
-	//name, err := tun.Name()
-	//if err != nil {
-	//	return nil, erro.New("tun name error: " + err.Error())
-	//}
+	name, err := tun.Name()
+	if err != nil {
+		return nil, errors.New("tun name error: " + err.Error())
+	}
 
-	//err = tun.initFromFlags(name)
-	//if err != nil {
-	//	return nil, erro.New("tun init error: " + err.Error())
-	//}
+	err = tun.initFromFlags(name)
+	if err != nil {
+		return nil, errors.New("tun init error: " + err.Error())
+	}
 
 	// start event listener
 	//tun.index, err = getIFIndex(name)
@@ -680,7 +680,6 @@ func CreateTUNFromFile(file *os.File, mtu int) (Device, error) {
 	//if err != nil {
 	//	return nil, erro.New("create netlink socket error: " + err.Error())
 	//}
-	var err error
 	tun.netlinkCancel, err = rwcancel.NewRWCancel(tun.netlinkSock)
 	if err != nil {
 		//unix.Close(tun.netlinkSock)

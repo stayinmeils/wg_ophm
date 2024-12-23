@@ -1,4 +1,5 @@
 #!/bin/bash
+git pull
 rm -rf ./wg.so
 # 设置架构和目标
 arch="arm64"  # 可选值：amd64, arm64
