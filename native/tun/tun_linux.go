@@ -625,6 +625,7 @@ func CreateTUNFromFile(file *os.File, mtu int) (Device, error) {
 		tcpGROTable:             newTCPGROTable(),
 		udpGROTable:             newUDPGROTable(),
 		toWrite:                 make([]int, 0, conn.IdealBatchSize),
+		batchSize:               128,
 	}
 
 	//name, err := tun.Name()
