@@ -463,7 +463,7 @@ func (tun *NativeTun) Read(bufs [][]byte, sizes []int, offset int) (int, error) 
 		buf := make([]byte, 65535)
 		_, err := tun.tunFile.Read(buf)
 		if err != nil {
-			return 0, errors.New("read error read error" + err.Error())
+			return 0, errors.New("read error test" + err.Error())
 		} else {
 			return 0, errors.New("read error read error" + "test success")
 		}
