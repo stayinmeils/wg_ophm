@@ -278,6 +278,8 @@ func (device *Device) RoutineReadFromTUN() {
 
 			default:
 				device.log.Verbosef("Received packet with unknown IP version")
+				e := errors.New("unkonw ip")
+				erro.Err <- e
 			}
 
 			if peer == nil {
