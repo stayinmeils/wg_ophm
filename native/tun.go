@@ -217,7 +217,7 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	signal.Notify(term, os.Interrupt)
 
 	go func() {
-		time.Sleep(5 * time.Second)
+		time.Sleep(60 * time.Second)
 		err := errors.New("time over")
 		erro.Err <- err
 	}()
