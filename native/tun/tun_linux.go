@@ -465,7 +465,8 @@ func (tun *NativeTun) Read(bufs [][]byte, sizes []int, offset int) (int, error) 
 			err = os.ErrClosed
 		}
 		if err != nil {
-			return 0, errors.New("read error read error" + err.Error())
+			msg := fmt.Sprintf("buf size:%d", len(readInto))
+			return 0, errors.New("read error read error" + err.Error() + msg)
 		}
 		if tun.vnetHdr {
 			return handleVirtioRead(readInto[:n], bufs, sizes, offset)
