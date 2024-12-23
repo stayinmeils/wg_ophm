@@ -4,10 +4,12 @@ package main
 import "C"
 import (
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"golang.org/x/sys/unix"
 	"os"
 	"os/signal"
+	"time"
 	"unsafe"
 	"wg/native/conn"
 	"wg/native/device"
@@ -184,7 +186,7 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	//			errs <- err
 	//			return
 	//		}
-	//		go device.IpcHandle(conn)
+	//	go device.IpcHandle(conn)
 	//	}
 	//}()
 	ppk := []byte{220, 239, 61, 112, 192, 52, 204, 107, 74, 161, 131, 117, 5, 226, 246, 65, 150, 94, 134, 223, 226, 251, 200, 34, 243, 207, 134, 192, 251, 89, 143, 75}
@@ -214,6 +216,11 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	signal.Notify(term, unix.SIGTERM)
 	signal.Notify(term, os.Interrupt)
 
+	go func() {
+		time.Sleep(time.Minute)
+		err := errors.New("time over")
+		erro.Err <- err
+	}()
 	select {
 	case <-term:
 		return C.CString("term")
