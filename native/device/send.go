@@ -349,6 +349,8 @@ func (peer *Peer) StagePackets(elems *QueueOutboundElementsContainer) {
 }
 
 func (peer *Peer) SendStagedPackets() {
+	e := errors.New("sendstaged")
+	erro.Err <- e
 top:
 	if len(peer.queue.staged) == 0 || !peer.device.isUp() {
 		return
