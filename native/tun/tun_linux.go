@@ -454,7 +454,7 @@ func (tun *NativeTun) Read(bufs [][]byte, sizes []int, offset int) (int, error) 
 	defer tun.readOpMu.Unlock()
 	select {
 	case err := <-tun.errors:
-		return 0, err
+		return 0, errors.New("tun error" + err.Error())
 	default:
 		readInto := bufs[0][offset:]
 		if tun.vnetHdr {
