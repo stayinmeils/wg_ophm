@@ -4,12 +4,10 @@ package main
 import "C"
 import (
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"golang.org/x/sys/unix"
 	"os"
 	"os/signal"
-	"time"
 	"unsafe"
 	"wg/native/conn"
 	"wg/native/device"
@@ -216,11 +214,6 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	signal.Notify(term, unix.SIGTERM)
 	signal.Notify(term, os.Interrupt)
 
-	go func() {
-		time.Sleep(60 * time.Second)
-		err := errors.New("time over")
-		erro.Err <- err
-	}()
 	select {
 	case <-term:
 		return C.CString("term")
