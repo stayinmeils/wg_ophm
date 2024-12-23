@@ -49,7 +49,7 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	tdev, err := func() (tun.Device, error) {
 		//tunFdStr := os.Getenv(ENV_WG_TUN_FD)
 		//if tunFdStr == "" {
-		return tun.WgCreateTun(device.DefaultMTU, int(fd))
+		return tun.WgCreateTun(int(fd), device.DefaultMTU)
 		//}
 
 		// construct tun device from supplied fd
