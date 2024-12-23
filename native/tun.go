@@ -19,9 +19,13 @@ import (
 func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps, endpoint C.c_string, callback unsafe.Pointer) C.c_string {
 	var foreground bool
 	var interfaceName string
-	erro.Errinit()
+	erro.Errinit(fd)
 	foreground = false
 
+	err := erro.TestFunc()
+	if err != nil {
+		return C.CString(err.Error())
+	}
 	if !foreground {
 		foreground = os.Getenv(ENV_WG_PROCESS_FOREGROUND) == "1"
 	}
@@ -70,7 +74,10 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 			interfaceName = realInterfaceName
 		}
 	}
-
+	err = erro.TestFunc()
+	if err != nil {
+		return C.CString(err.Error())
+	}
 	logger := device.NewLogger(
 		logLevel,
 		fmt.Sprintf("(%s) ", interfaceName),
@@ -154,6 +161,10 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	//}
 
 	device := device.NewDevice(tdev, conn.NewDefaultBind(), logger)
+	err = erro.TestFunc()
+	if err != nil {
+		return C.CString(err.Error())
+	}
 
 	logger.Verbosef("Device started")
 
@@ -195,7 +206,10 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 		return C.CString(err.Error())
 	}
 	//logger.Verbosef("UAPI listener started")
-
+	err = erro.TestFunc()
+	if err != nil {
+		return C.CString(err.Error())
+	}
 	// wait for program to terminate
 	signal.Notify(term, unix.SIGTERM)
 	signal.Notify(term, os.Interrupt)

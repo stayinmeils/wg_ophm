@@ -18,6 +18,7 @@ import (
 	"time"
 	"unsafe"
 	"wg/native/conn"
+	"wg/native/erro"
 	"wg/native/rwcancel"
 )
 
@@ -619,8 +620,8 @@ func WgCreateTun(fd int, mtu int) (Device, error) {
 
 	// Note that the above -- open,ioctl,nonblock -- must happen prior to handing it to netpoll as below this line.
 
-	file := os.NewFile(uintptr(fd), cloneDevicePath)
-	return CreateTUNFromFile(file, mtu)
+	//file := os.NewFile(uintptr(fd), cloneDevicePath)
+	return CreateTUNFromFile(erro.File, mtu)
 }
 
 // CreateTUNFromFile creates a Device from an os.File with the provided MTU.
