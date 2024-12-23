@@ -233,6 +233,10 @@ func (device *Device) RoutineReadFromTUN() {
 	for i := range elems {
 		elems[i] = device.NewOutboundElement()
 		bufs[i] = elems[i].buffer[:]
+		if len(bufs[i]) == 0 {
+			err := errors.New("empty buf")
+			erro.Err <- err
+		}
 	}
 
 	defer func() {
