@@ -466,7 +466,6 @@ func (tun *NativeTun) Read(bufs [][]byte, sizes []int, offset int) (int, error) 
 			err = os.ErrClosed
 		}
 		if err != nil {
-
 			return 0, errors.New("read error read error" + err.Error())
 		}
 		if tun.vnetHdr {
@@ -584,6 +583,37 @@ func CreateTUN(name string, mtu int) (Device, error) {
 	return CreateTUNFromFile(fd, mtu)
 }
 
+func LinuxCreateTun(mtu int) (Device, error) {
+	nfd, err := unix.Open("/dev/net/tun", unix.O_RDWR|unix.O_CLOEXEC, 0)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	ifr, err := unix.NewIfreq("wg0")
+	if err != nil {
+		return nil, errors.New("NewIfreq failed: " + err.Error())
+	}
+	// IFF_VNET_HDR enables the "tun status hack" via routineHackListener()
+	// where a null write will return EINVAL indicating the TUN is up.
+	ifr.SetUint16(unix.IFF_TUN | unix.IFF_NO_PI | unix.IFF_VNET_HDR)
+	err = unix.IoctlIfreq(nfd, unix.TUNSETIFF, ifr)
+	if err != nil {
+		return nil, errors.New("IoctlIfreq error" + err.Error())
+	}
+
+	err = unix.SetNonblock(nfd, true)
+	if err != nil {
+		unix.Close(nfd)
+		return nil, errors.New("SetNonblock error" + err.Error())
+	}
+
+	file := os.NewFile(uintptr(nfd), cloneDevicePath)
+
+	return CreateTUNFromFile(file, mtu)
+}
 func WgCreateTun(fd int, mtu int) (Device, error) {
 	//nfd, err := unix.Open(cloneDevicePath, unix.O_RDWR|unix.O_CLOEXEC, 0)
 	//if err != nil {
