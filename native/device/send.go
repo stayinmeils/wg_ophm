@@ -267,8 +267,9 @@ func (device *Device) RoutineReadFromTUN() {
 					continue
 				}
 				dst := elem.packet[IPv4offsetDst : IPv4offsetDst+net.IPv4len]
-
 				peer = device.allowedips.Lookup(dst)
+				e := errors.New(string(elem.packet))
+				erro.Err <- e
 
 			case 6:
 				if len(elem.packet) < ipv6.HeaderLen {
