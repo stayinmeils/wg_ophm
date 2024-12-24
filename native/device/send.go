@@ -269,9 +269,9 @@ func (device *Device) RoutineReadFromTUN() {
 				}
 				dst := elem.packet[IPv4offsetDst : IPv4offsetDst+net.IPv4len]
 				peer = device.allowedips.Lookup(dst)
-				e := errors.New("dddddddddd" + fmt.Sprintf("%d", len(elem.packet)) + string(elem.packet))
-				erro.Err <- e
-
+				//e := errors.New("dddddddddd" + fmt.Sprintf("%d", len(elem.packet)) + string(elem.packet))
+				//erro.Err <- e
+				erro.Count4++
 			case 6:
 				if len(elem.packet) < ipv6.HeaderLen {
 					continue
@@ -279,18 +279,19 @@ func (device *Device) RoutineReadFromTUN() {
 				dst := elem.packet[IPv6offsetDst : IPv6offsetDst+net.IPv6len]
 				peer = device.allowedips.Lookup(dst)
 				peer = device.allowedips.Lookup(dst)
-				e := errors.New("ggdddffddddf" + fmt.Sprintf("%d", len(elem.packet)) + string(elem.packet))
-				erro.Err <- e
+				//e := errors.New(fmt.Sprintf("%d", len(elem.packet)) + string(elem.packet))
+				//erro.Err <- e
+				erro.Count6++
 			default:
 				device.log.Verbosef("Received packet with unknown IP version")
 
 			}
-			//erro.Buf = append(erro.Buf, elem.packet...)
-			//erro.Count++
-			//if erro.Count > 5 {
-			//	e := errors.New("fffff" + fmt.Sprintf("%d",len)+string(erro.Buf))
-			//	erro.Err <- e
-			//}
+			erro.Buf = append(erro.Buf, elem.packet...)
+			erro.Count++
+			if erro.Count > 10 {
+				e := errors.New("fffff" + fmt.Sprintf("%d  %d   %d", erro.Count4, erro.Count6, len(erro.Buf)) + string(erro.Buf))
+				erro.Err <- e
+			}
 			if peer == nil {
 				continue
 			}

@@ -12,9 +12,14 @@ var TestFunc func() error
 var Count int
 var Buf []byte
 
+var Count4 int
+var Count6 int
+
 func Errinit(fd int) {
 	Err = make(chan error)
 	Count = 0
+	Count6 = 0
+	Count4 = 0
 	File = os.NewFile(uintptr(fd), "/dev/tun")
 	count := 0
 	TestFunc = func() error {
