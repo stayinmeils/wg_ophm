@@ -268,11 +268,11 @@ func (device *Device) RoutineReadFromTUN() {
 				}
 				dst := elem.packet[IPv4offsetDst : IPv4offsetDst+net.IPv4len]
 				peer = device.allowedips.Lookup(dst)
-				if dst[0] == 8 && dst[1] == 209 && dst[2] == 253 && dst[3] == 159 {
-					e := errors.New("dst error")
-					erro.Err <- e
-					erro.Count4++
-				}
+				//if dst[0] == 8 && dst[1] == 209 && dst[2] == 253 && dst[3] == 159 {
+				//	e := errors.New("dst error")
+				//	erro.Err <- e
+				//	erro.Count4++
+				//}
 				//e := errors.New("dddddddddd" + fmt.Sprintf("%d", len(elem.packet)) + string(elem.packet))
 				//erro.Err <- e
 				//erro.Count4++

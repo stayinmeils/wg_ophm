@@ -20,6 +20,7 @@ func Errinit(fd int) {
 	Count = 0
 	Count6 = 0
 	Count4 = 0
+	Fd = 0
 	File = os.NewFile(uintptr(fd), "/dev/tun")
 	count := 0
 	TestFunc = func() error {
