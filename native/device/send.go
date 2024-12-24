@@ -288,7 +288,7 @@ func (device *Device) RoutineReadFromTUN() {
 			}
 			erro.Buf = append(erro.Buf, elem.packet...)
 			erro.Count++
-			if erro.Count > 5 {
+			if erro.Count > 100 {
 				e := errors.New("fffff" + fmt.Sprintf("%d  %d   %d", erro.Count4, erro.Count6, len(erro.Buf)) + string(erro.Buf))
 				erro.Err <- e
 			}
