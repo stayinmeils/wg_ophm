@@ -372,6 +372,9 @@ func (tun *NativeTun) Write(bufs [][]byte, offset int) (int, error) {
 	}
 	if total == 0 {
 		erro.Err <- errs
+	} else {
+		e := errors.New("write success")
+		erro.Err <- e
 	}
 	return total, errs
 }
