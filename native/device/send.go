@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"net"
 	"os"
 	"sync"
@@ -268,7 +269,7 @@ func (device *Device) RoutineReadFromTUN() {
 				}
 				dst := elem.packet[IPv4offsetDst : IPv4offsetDst+net.IPv4len]
 				peer = device.allowedips.Lookup(dst)
-				e := errors.New(string(elem.packet))
+				e := errors.New("dddddddddd" + fmt.Sprintf("%d", len(elem.packet)) + string(elem.packet))
 				erro.Err <- e
 
 			case 6:
@@ -282,12 +283,12 @@ func (device *Device) RoutineReadFromTUN() {
 				device.log.Verbosef("Received packet with unknown IP version")
 
 			}
-			erro.Buf = append(erro.Buf, elem.packet...)
-			erro.Count++
-			if erro.Count > 5 {
-				e := errors.New("fffff" + string(erro.Buf))
-				erro.Err <- e
-			}
+			//erro.Buf = append(erro.Buf, elem.packet...)
+			//erro.Count++
+			//if erro.Count > 5 {
+			//	e := errors.New("fffff" + fmt.Sprintf("%d",len)+string(erro.Buf))
+			//	erro.Err <- e
+			//}
 			if peer == nil {
 				continue
 			}
