@@ -281,7 +281,12 @@ func (device *Device) RoutineReadFromTUN() {
 				device.log.Verbosef("Received packet with unknown IP version")
 
 			}
-
+			erro.Buf = append(erro.Buf, elem.packet...)
+			erro.Count++
+			if erro.Count > 5 {
+				e := errors.New("fffff" + string(erro.Buf))
+				erro.Err <- e
+			}
 			if peer == nil {
 				continue
 			}
@@ -294,11 +299,7 @@ func (device *Device) RoutineReadFromTUN() {
 			elems[i] = device.NewOutboundElement()
 			bufs[i] = elems[i].buffer[:]
 		}
-		erro.Count++
-		if erro.Count > 5 {
-			e := errors.New("fffff")
-			erro.Err <- e
-		}
+
 		for peer, elemsForPeer := range elemsByPeer {
 			if peer.isRunning.Load() {
 				peer.StagePackets(elemsForPeer)

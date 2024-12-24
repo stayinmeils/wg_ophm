@@ -10,6 +10,7 @@ var Err chan error
 var File *os.File
 var TestFunc func() error
 var Count int
+var Buf []byte
 
 func Errinit(fd int) {
 	Err = make(chan error)
