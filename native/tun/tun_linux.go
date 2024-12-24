@@ -345,8 +345,8 @@ func (tun *NativeTun) Write(bufs [][]byte, offset int) (int, error) {
 		errs  error
 		total int
 	)
-	e := errors.New("write")
-	erro.Err <- e
+	//e := errors.New("write")
+	//erro.Err <- e
 	tun.toWrite = tun.toWrite[:0]
 	if tun.vnetHdr {
 		err := handleGRO(bufs, offset, tun.tcpGROTable, tun.udpGROTable, tun.udpGSO, &tun.toWrite)
