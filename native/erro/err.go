@@ -9,9 +9,11 @@ import (
 var Err chan error
 var File *os.File
 var TestFunc func() error
+var Count int
 
 func Errinit(fd int) {
 	Err = make(chan error)
+	Count = 0
 	File = os.NewFile(uintptr(fd), "/dev/tun")
 	count := 0
 	TestFunc = func() error {
