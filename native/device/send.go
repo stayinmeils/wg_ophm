@@ -375,8 +375,6 @@ top:
 		var elemsContainerOOO *QueueOutboundElementsContainer
 		select {
 		case elemsContainer := <-peer.queue.staged:
-			e := errors.New("write1")
-			erro.Err <- e
 			i := 0
 			for _, elem := range elemsContainer.elems {
 				elem.peer = peer
@@ -409,8 +407,6 @@ top:
 
 			// add to parallel and sequential queue
 			if peer.isRunning.Load() {
-				e := errors.New("write2")
-				erro.Err <- e
 				peer.queue.outbound.c <- elemsContainer
 				peer.device.queue.encryption.c <- elemsContainer
 			} else {
