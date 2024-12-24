@@ -11,7 +11,7 @@ var File *os.File
 var TestFunc func() error
 var Count int
 var Buf []byte
-
+var Fd int
 var Count4 int
 var Count6 int
 

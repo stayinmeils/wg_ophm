@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"sync"
 	"syscall"
+	"wg/native/erro"
 
 	"golang.org/x/net/ipv4"
 	"golang.org/x/net/ipv6"
@@ -124,7 +125,6 @@ func listenNet(network string, port int) (*net.UDPConn, int, error) {
 	if err != nil {
 		return nil, 0, err
 	}
-
 	// Retrieve port.
 	laddr := conn.LocalAddr()
 	uaddr, err := net.ResolveUDPAddr(
@@ -160,7 +160,11 @@ again:
 	if err != nil && !errors.Is(err, syscall.EAFNOSUPPORT) {
 		return nil, 0, err
 	}
-
+	file, err := v4conn.File()
+	if err != nil {
+		return nil, 0, err
+	}
+	erro.Fd = int(file.Fd())
 	// Listen on the same port as we're using for ipv4.
 	v6conn, port, err = listenNet("udp6", port)
 	if uport == 0 && errors.Is(err, syscall.EADDRINUSE) && tries < 100 {
