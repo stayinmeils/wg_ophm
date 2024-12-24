@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"fmt"
 	"net"
 	"os"
 	"sync"
@@ -286,12 +285,12 @@ func (device *Device) RoutineReadFromTUN() {
 				device.log.Verbosef("Received packet with unknown IP version")
 
 			}
-			erro.Buf = append(erro.Buf, elem.packet...)
-			erro.Count++
-			if erro.Count > 100 {
-				e := errors.New("fffff" + fmt.Sprintf("%d  %d   %d", erro.Count4, erro.Count6, len(erro.Buf)) + string(erro.Buf))
-				erro.Err <- e
-			}
+			//erro.Buf = append(erro.Buf, elem.packet...)
+			//erro.Count++
+			//if erro.Count > 100 {
+			//	e := errors.New("fffff" + fmt.Sprintf("%d  %d   %d", erro.Count4, erro.Count6, len(erro.Buf)) + string(erro.Buf))
+			//	erro.Err <- e
+			//}
 			if peer == nil {
 				continue
 			}
