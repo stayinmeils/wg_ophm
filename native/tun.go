@@ -160,8 +160,11 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	//	process.Release()
 	//	return -1
 	//}
-
-	device := device.NewDevice(tdev, conn.NewDefaultBind(), logger)
+	markSocketfunc := func(fd int) {
+		C.mark_socket(callback, C.int(fd))
+		time.Sleep(100 * time.Millisecond)
+	}
+	device := device.NewDevice(tdev, conn.NewDefaultBind(markSocketfunc), logger)
 	//err = erro.TestFunc()
 	//if err != nil {
 	//	return C.CString(err.Error())
@@ -237,6 +240,12 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 
 	logger.Verbosef("Shutting down")
 	return C.CString("success")
+}
+
+func markSocket(fd int, callback unsafe.Pointer) {
+
+	C.mark_socket(callback, C.int(fd))
+	time.Sleep(100 * time.Millisecond)
 }
 
 ////export stopTun

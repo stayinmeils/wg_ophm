@@ -9,7 +9,7 @@
 
 typedef const char *c_string;
 
-//typedef void (*mark_socket_func)(void *tun_interface, int fd);
+typedef void (*mark_socket_func)(void *tun_interface, int fd);
 //
 //typedef int (*query_socket_uid_func)(void *tun_interface, int protocol, const char *source, const char *target);
 //
@@ -25,8 +25,8 @@ typedef const char *c_string;
 //
 //// typedef int (*open_content_func)(const char *url, char *error, int error_length);
 //
-//// cgo
-//extern void mark_socket(void *interface, int fd);
+// cgo
+extern void mark_socket(void *interface, int fd);
 //
 //extern int query_socket_uid(void *interface, int protocol, char *source, char *target);
 //
@@ -42,12 +42,12 @@ typedef const char *c_string;
 //
 //extern int open_content(char *url, char *error, int error_length);
 //
-//extern void log_info(char *msg);
-//
-//extern void log_error(char *msg);
-//
-//extern void log_warn(char *msg);
-//
-//extern void log_debug(char *msg);
-//
-//extern void log_verbose(char *msg);
+extern void log_info(char *msg);
+
+extern void log_error(char *msg);
+
+extern void log_warn(char *msg);
+
+extern void log_debug(char *msg);
+
+extern void log_verbose(char *msg);

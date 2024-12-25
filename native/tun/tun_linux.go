@@ -28,6 +28,7 @@ const (
 )
 
 type NativeTun struct {
+	callback                unsafe.Pointer
 	tunFile                 *os.File
 	index                   int32      // if index
 	errors                  chan error // async error handling
@@ -558,70 +559,71 @@ func (tun *NativeTun) initFromFlags(name string) error {
 }
 
 // CreateTUN creates a Device with the provided name and MTU.
-func CreateTUN(name string, mtu int) (Device, error) {
-	nfd, err := unix.Open(cloneDevicePath, unix.O_RDWR|unix.O_CLOEXEC, 0)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, fmt.Errorf("CreateTUN(%q) failed; %s does not exist", name, cloneDevicePath)
-		}
-		return nil, err
-	}
+//func CreateTUN(name string, mtu int) (Device, error) {
+//	nfd, err := unix.Open(cloneDevicePath, unix.O_RDWR|unix.O_CLOEXEC, 0)
+//	if err != nil {
+//		if os.IsNotExist(err) {
+//			return nil, fmt.Errorf("CreateTUN(%q) failed; %s does not exist", name, cloneDevicePath)
+//		}
+//		return nil, err
+//	}
+//
+//	ifr, err := unix.NewIfreq(name)
+//	if err != nil {
+//		return nil, err
+//	}
+//	// IFF_VNET_HDR enables the "tun status hack" via routineHackListener()
+//	// where a null write will return EINVAL indicating the TUN is up.
+//	ifr.SetUint16(unix.IFF_TUN | unix.IFF_NO_PI | unix.IFF_VNET_HDR)
+//	err = unix.IoctlIfreq(nfd, unix.TUNSETIFF, ifr)
+//	if err != nil {
+//		return nil, err
+//	}
+//
+//	err = unix.SetNonblock(nfd, true)
+//	if err != nil {
+//		unix.Close(nfd)
+//		return nil, err
+//	}
+//
+//	// Note that the above -- open,ioctl,nonblock -- must happen prior to handing it to netpoll as below this line.
+//
+//	fd := os.NewFile(uintptr(nfd), cloneDevicePath)
+//	return CreateTUNFromFile(fd, mtu)
+//}
 
-	ifr, err := unix.NewIfreq(name)
-	if err != nil {
-		return nil, err
-	}
-	// IFF_VNET_HDR enables the "tun status hack" via routineHackListener()
-	// where a null write will return EINVAL indicating the TUN is up.
-	ifr.SetUint16(unix.IFF_TUN | unix.IFF_NO_PI | unix.IFF_VNET_HDR)
-	err = unix.IoctlIfreq(nfd, unix.TUNSETIFF, ifr)
-	if err != nil {
-		return nil, err
-	}
+//func LinuxCreateTun(mtu int) (Device, error) {
+//	nfd, err := unix.Open("/dev/net/tun", unix.O_RDWR|unix.O_CLOEXEC, 0)
+//	if err != nil {
+//		if os.IsNotExist(err) {
+//			return nil, err
+//		}
+//		return nil, err
+//	}
+//
+//	ifr, err := unix.NewIfreq("wg0")
+//	if err != nil {
+//		return nil, errors.New("NewIfreq failed: " + err.Error())
+//	}
+//	// IFF_VNET_HDR enables the "tun status hack" via routineHackListener()
+//	// where a null write will return EINVAL indicating the TUN is up.
+//	ifr.SetUint16(unix.IFF_TUN | unix.IFF_NO_PI | unix.IFF_VNET_HDR)
+//	err = unix.IoctlIfreq(nfd, unix.TUNSETIFF, ifr)
+//	if err != nil {
+//		return nil, errors.New("IoctlIfreq error" + err.Error())
+//	}
+//
+//	err = unix.SetNonblock(nfd, true)
+//	if err != nil {
+//		unix.Close(nfd)
+//		return nil, errors.New("SetNonblock error" + err.Error())
+//	}
+//
+//	file := os.NewFile(uintptr(nfd), cloneDevicePath)
+//
+//	return CreateTUNFromFile(file, mtu)
+//}
 
-	err = unix.SetNonblock(nfd, true)
-	if err != nil {
-		unix.Close(nfd)
-		return nil, err
-	}
-
-	// Note that the above -- open,ioctl,nonblock -- must happen prior to handing it to netpoll as below this line.
-
-	fd := os.NewFile(uintptr(nfd), cloneDevicePath)
-	return CreateTUNFromFile(fd, mtu)
-}
-
-func LinuxCreateTun(mtu int) (Device, error) {
-	nfd, err := unix.Open("/dev/net/tun", unix.O_RDWR|unix.O_CLOEXEC, 0)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, err
-		}
-		return nil, err
-	}
-
-	ifr, err := unix.NewIfreq("wg0")
-	if err != nil {
-		return nil, errors.New("NewIfreq failed: " + err.Error())
-	}
-	// IFF_VNET_HDR enables the "tun status hack" via routineHackListener()
-	// where a null write will return EINVAL indicating the TUN is up.
-	ifr.SetUint16(unix.IFF_TUN | unix.IFF_NO_PI | unix.IFF_VNET_HDR)
-	err = unix.IoctlIfreq(nfd, unix.TUNSETIFF, ifr)
-	if err != nil {
-		return nil, errors.New("IoctlIfreq error" + err.Error())
-	}
-
-	err = unix.SetNonblock(nfd, true)
-	if err != nil {
-		unix.Close(nfd)
-		return nil, errors.New("SetNonblock error" + err.Error())
-	}
-
-	file := os.NewFile(uintptr(nfd), cloneDevicePath)
-
-	return CreateTUNFromFile(file, mtu)
-}
 func WgCreateTun(fd int, mtu int) (Device, error) {
 	//nfd, err := unix.Open(cloneDevicePath, unix.O_RDWR|unix.O_CLOEXEC, 0)
 	//if err != nil {

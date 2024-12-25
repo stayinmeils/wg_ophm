@@ -40,7 +40,7 @@ type StdNetBind struct {
 	ipv4RxOffload bool
 	ipv6TxOffload bool
 	ipv6RxOffload bool
-
+	markSocket    func(int)
 	// these two fields are not guarded by mu
 	udpAddrPool sync.Pool
 	msgsPool    sync.Pool
@@ -49,7 +49,7 @@ type StdNetBind struct {
 	blackhole6 bool
 }
 
-func NewStdNetBind() Bind {
+func NewStdNetBind(f func(int)) Bind {
 	return &StdNetBind{
 		udpAddrPool: sync.Pool{
 			New: func() any {
@@ -58,7 +58,7 @@ func NewStdNetBind() Bind {
 				}
 			},
 		},
-
+		markSocket: f,
 		msgsPool: sync.Pool{
 			New: func() any {
 				// ipv6.Message and ipv4.Message are interchangeable as they are
@@ -406,6 +406,13 @@ retry:
 			(*msgs)[i].Buffers[0] = bufs[i]
 			setSrcControl(&(*msgs)[i].OOB, endpoint.(*StdNetEndpoint))
 		}
+		c, err := conn.SyscallConn()
+		if err != nil {
+			return err
+		}
+		c.Control(func(fd uintptr) {
+			s.markSocket(int(fd))
+		})
 		err = s.send(conn, br, (*msgs)[:len(bufs)])
 	}
 	if retried {
