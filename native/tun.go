@@ -162,7 +162,7 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	//}
 	markSocketfunc := func(fd int) {
 		C.mark_socket(callback, C.int(fd))
-		time.Sleep(100 * time.Millisecond)
+		//time.Sleep(100 * time.Millisecond)
 	}
 	device := device.NewDevice(tdev, conn.NewDefaultBind(markSocketfunc), logger)
 	//err = erro.TestFunc()
