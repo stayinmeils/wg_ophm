@@ -8,6 +8,7 @@ import (
 	"golang.org/x/sys/unix"
 	"os"
 	"os/signal"
+	"time"
 	"unsafe"
 	"wg/native/conn"
 	"wg/native/device"
@@ -15,13 +16,8 @@ import (
 	"wg/native/tun"
 )
 
-//export getFd
-func getFd() C.int {
-	return C.int(erro.Fd)
-}
-
 //export startTun
-func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps, endpoint C.c_string, callback unsafe.Pointer) C.c_string {
+func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps, endpoint C.c_string, callback unsafe.Pointer, socketFd *int) C.c_string {
 	var foreground bool
 	var interfaceName string
 	erro.Errinit(int(fd))
@@ -212,6 +208,8 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	if err != nil {
 		return C.CString(err.Error())
 	}
+	time.Sleep(time.Second)
+	*socketFd = erro.Fd
 	//logger.Verbosef("UAPI listener started")
 	//err = erro.TestFunc()
 	//if err != nil {
