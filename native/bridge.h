@@ -42,12 +42,12 @@ extern void mark_socket(void *interface, int fd);
 //
 //extern int open_content(char *url, char *error, int error_length);
 //
-extern void log_info(char *msg);
-
-extern void log_error(char *msg);
-
-extern void log_warn(char *msg);
-
-extern void log_debug(char *msg);
-
-extern void log_verbose(char *msg);
+//extern void log_info(char *msg);
+//
+//extern void log_error(char *msg);
+//
+//extern void log_warn(char *msg);
+//
+//extern void log_debug(char *msg);
+//
+//extern void log_verbose(char *msg);

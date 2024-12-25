@@ -1,5 +1,4 @@
 #include "bridge.h"
-#include "trace.h"
 #include <stdio.h>
 // void (*mark_socket_func)(void *tun_interface, int fd);
 
@@ -19,7 +18,7 @@
 
 
 void mark_socket(void *interface, int fd) {
-    TRACE_METHOD();
+    //TRACE_METHOD();
     mark_socket_func func = (mark_socket_func)(interface);
     func(interface, fd);
 }
@@ -88,30 +87,30 @@ void mark_socket(void *interface, int fd) {
 //    //release_object_func(obj);
 //}
 
-void log_info(char *msg) {
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_DOMAIN, TAG, "%{public}s", msg);
-    free(msg);
-}
-
-void log_error(char *msg) {
-    OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_DOMAIN,TAG, "%{public}s", msg);
-
-    free(msg);
-}
-
-void log_warn(char *msg) {
-    OH_LOG_Print(LOG_APP, LOG_WARN, LOG_DOMAIN, TAG, "%{public}s", msg);
-
-    free(msg);
-}
-
-void log_debug(char *msg) {
-    OH_LOG_Print(LOG_APP, LOG_DEBUG, LOG_DOMAIN, TAG, "%{public}s", msg);
-
-    free(msg);
-}
-
-void log_verbose(char *msg) {
-    OH_LOG_Print(LOG_APP, LOG_DEBUG, LOG_DOMAIN, TAG, "%{public}s", msg);
-    free(msg);
-}
+//void log_info(char *msg) {
+//    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_DOMAIN, TAG, "%{public}s", msg);
+//    free(msg);
+//}
+//
+//void log_error(char *msg) {
+//    OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_DOMAIN,TAG, "%{public}s", msg);
+//
+//    free(msg);
+//}
+//
+//void log_warn(char *msg) {
+//    OH_LOG_Print(LOG_APP, LOG_WARN, LOG_DOMAIN, TAG, "%{public}s", msg);
+//
+//    free(msg);
+//}
+//
+//void log_debug(char *msg) {
+//    OH_LOG_Print(LOG_APP, LOG_DEBUG, LOG_DOMAIN, TAG, "%{public}s", msg);
+//
+//    free(msg);
+//}
+//
+//void log_verbose(char *msg) {
+//    OH_LOG_Print(LOG_APP, LOG_DEBUG, LOG_DOMAIN, TAG, "%{public}s", msg);
+//    free(msg);
+//}
