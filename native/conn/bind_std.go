@@ -387,6 +387,13 @@ func (s *StdNetBind) Send(bufs [][]byte, endpoint Endpoint) error {
 retry:
 	if offload {
 		n := coalesceMessages(ua, endpoint.(*StdNetEndpoint), bufs, *msgs, setGSOSize)
+		c, err := conn.SyscallConn()
+		if err != nil {
+			return err
+		}
+		c.Control(func(fd uintptr) {
+			s.markSocket(int(fd))
+		})
 		err = s.send(conn, br, (*msgs)[:n])
 		if err != nil && offload && errShouldDisableUDPGSO(err) {
 			offload = false
