@@ -195,9 +195,9 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 		fmt.Sprintf("listen_port=%s", string(C.GoString(listenPort))),
 		fmt.Sprintf("public_key=%s", hex.EncodeToString(ppk)),
 		"replace_allowed_ips=true",
-		"allowed_ip=0.0.0.0/1",
-		"allowed_ip=128.0.0.0/1",
-		//fmt.Sprintf("allowed_ip=%s", string(C.GoString(allowedIps))),
+		//"allowed_ip=0.0.0.0/1",
+		//"allowed_ip=128.0.0.0/1",
+		fmt.Sprintf("allowed_ip=%s", string(C.GoString(allowedIps))),
 		fmt.Sprintf("endpoint=%s", string(C.GoString(endpoint))),
 	}
 	err = device.IpcSetOperationByString(lines)
