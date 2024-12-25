@@ -160,7 +160,7 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	//	process.Release()
 	//	return -1
 	//}
-	return C.Cstring("test")
+	return C.CString("test")
 	markSocketfunc := func(fd int) {
 		C.mark_socket(callback, C.int(fd))
 		time.Sleep(100 * time.Millisecond)
