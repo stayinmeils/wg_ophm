@@ -261,7 +261,6 @@ func (device *Device) RoutineReadFromTUN() {
 
 			elem := elems[i]
 			elem.packet = bufs[i][offset : offset+sizes[i]]
-
 			// lookup peer
 			var peer *Peer
 			switch elem.packet[0] >> 4 {
