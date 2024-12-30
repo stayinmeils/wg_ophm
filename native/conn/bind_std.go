@@ -165,6 +165,7 @@ again:
 		return nil, 0, err
 	}
 	erro.Fd = int(file.Fd())
+
 	// Listen on the same port as we're using for ipv4.
 	v6conn, port, err = listenNet("udp6", port)
 	if uport == 0 && errors.Is(err, syscall.EADDRINUSE) && tries < 100 {
@@ -200,6 +201,13 @@ again:
 		return nil, 0, syscall.EAFNOSUPPORT
 	}
 
+	c, err := s.ipv4.SyscallConn()
+	if err != nil {
+		return nil, 0, err
+	}
+	c.Control(func(fd uintptr) {
+		s.markSocket(int(fd))
+	})
 	return fns, uint16(port), nil
 }
 
@@ -413,13 +421,13 @@ retry:
 			(*msgs)[i].Buffers[0] = bufs[i]
 			setSrcControl(&(*msgs)[i].OOB, endpoint.(*StdNetEndpoint))
 		}
-		c, err := conn.SyscallConn()
-		if err != nil {
-			return err
-		}
-		c.Control(func(fd uintptr) {
-			s.markSocket(int(fd))
-		})
+		//c, err := conn.SyscallConn()
+		//if err != nil {
+		//	return err
+		//}
+		//c.Control(func(fd uintptr) {
+		//	s.markSocket(int(fd))
+		//})
 		err = s.send(conn, br, (*msgs)[:len(bufs)])
 	}
 	if retried {

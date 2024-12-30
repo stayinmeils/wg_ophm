@@ -3,6 +3,7 @@ package main
 //#include "bridge.h"
 import "C"
 import (
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
 	"golang.org/x/sys/unix"
@@ -169,12 +170,10 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	//if err != nil {
 	//	return C.CString(err.Error())
 	//}
-
 	logger.Verbosef("Device started")
 
 	errs := make(chan error)
 	term := make(chan os.Signal, 1)
-
 	//uapi, err := ipc.UAPIListen(interfaceName, fileUAPI)
 	//if err != nil {
 	//	logger.Errorf("Failed to listen on uapi socket: %v", err)
@@ -191,15 +190,19 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 	//	go device.IpcHandle(conn)
 	//	}
 	//}()
-	dpk := []byte{224, 142, 133, 106, 105, 118, 255, 109, 242, 21, 233, 30, 232, 201, 0, 22, 174, 211, 141, 18, 152, 167, 98, 71, 182, 116, 106, 159, 81, 227, 102, 98}
-	ppk := []byte{94, 225, 107, 63, 250, 72, 58, 168, 224, 228, 214, 2, 236, 13, 149, 4, 207, 218, 115, 192, 43, 209, 246, 144, 1, 131, 35, 213, 58, 66, 63, 83}
+	dpk, err := base64.StdEncoding.DecodeString(C.GoString(devicePrivateKey))
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	ppk, err := base64.StdEncoding.DecodeString(C.GoString(peerPublicKey))
+	if err != nil {
+		return C.CString(err.Error())
+	}
 	lines := []string{
 		fmt.Sprintf("private_key=%s", hex.EncodeToString(dpk)),
 		fmt.Sprintf("listen_port=%s", string(C.GoString(listenPort))),
 		fmt.Sprintf("public_key=%s", hex.EncodeToString(ppk)),
 		"replace_allowed_ips=true",
-		//"allowed_ip=0.0.0.0/1",
-		//"allowed_ip=128.0.0.0/1",
 		fmt.Sprintf("allowed_ip=%s", string(C.GoString(allowedIps))),
 		fmt.Sprintf("endpoint=%s", string(C.GoString(endpoint))),
 	}
@@ -243,18 +246,5 @@ func startTun(fd C.int, devicePrivateKey, listenPort, peerPublicKey, allowedIps,
 }
 
 func markSocket(fd int, callback unsafe.Pointer) {
-
 	C.mark_socket(callback, C.int(fd))
-	time.Sleep(100 * time.Millisecond)
 }
-
-////export stopTun
-//func stopTun() {
-//	rTunLock.Lock()
-//	defer rTunLock.Unlock()
-//
-//	if rTun != nil {
-//		rTun.close()
-//		rTun = nil
-//	}
-//}
